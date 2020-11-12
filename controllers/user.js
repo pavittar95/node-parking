@@ -12,9 +12,6 @@ import { ROLE } from "../utilities/constants";
 /**************** Add User ***********/
 export const addUser = async (req, res, next) => {
   const payload = req.body;
-  if (req.user.role !== ROLE.ADMIN) {
-    return res.status(400).json(failAction(Message.unauthorizedUser));
-  }
   try {
     await save(payload);
     res.status(200).json(successAction(null, Message.userAdded));
@@ -55,31 +52,9 @@ export const logout = async (req, res, next) => {
 /**************** update user info ***********/
 export const updateUser = async (req, res, next) => {
   const payload = req.body;
-  if (req.user.role !== ROLE.ADMIN) {
-    return res.status(400).json(failAction(Message.unauthorizedUser));
-  }
   try {
     const data = await updateUserInfo(payload);
     res.status(200).json(successAction(data, Message.userUpdate));
-  } catch (error) {
-    res.status(400).json(failAction(error.message));
-  }
-};
-/**************** update status of user ***********/
-export const status = async (req, res, next) => {
-  const payload = req.body;
-  if (req.user.role !== ROLE.ADMIN) {
-    return res.status(400).json(failAction(Message.unauthorizedUser));
-  }
-  try {
-    await updateUserInfo(payload);
-    let status = "deleted";
-    if (payload.status === 1) {
-      status = "activated";
-    } else if (payload.status === 2) {
-      status = "blocked";
-    }
-    res.status(200).json(successAction(payload, Message.updateStatus(status)));
   } catch (error) {
     res.status(400).json(failAction(error.message));
   }
